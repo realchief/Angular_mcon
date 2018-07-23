@@ -1,0 +1,120 @@
+<!-- Sidebar Scroll Container -->
+<div id="sidebar-scroll">
+    <!-- Sidebar Content -->
+    <!-- Adding .sidebar-mini-hide to an element will hide it when the sidebar is in mini mode -->
+    <div class="sidebar-content">
+        <!-- Side Header -->
+        <div class="side-header side-content bg-white-op">
+            <button class="btn btn-link text-gray pull-right hidden-md hidden-lg" type="button" data-ng-click="oneui.settings.sidebarOpenXs = false" data-js-blur>
+                <i class="fa fa-times"></i>
+            </button>
+            <div class="btn-group pull-right" data-on-toggle="toggled(open)" data-uib-dropdown>
+                <button class="btn btn-link text-gray" type="button" data-uib-dropdown-toggle>
+                    <i class="si si-drop"></i>
+                </button>
+                <ul class="dropdown-menu-right font-s13 sidebar-mini-hide" data-uib-dropdown-menu>
+                    <li data-ng-class="{'active': ! oneui.settings.activeColorTheme}">
+                        <a data-ng-click="oneui.settings.activeColorTheme = false" tabindex="-1" href="javascript:void(0)">
+                            <i class="fa fa-circle text-default pull-right"></i> <span class="font-w600">Default</span>
+                        </a>
+                    </li>
+                    <li data-ng-class="{'active': oneui.settings.activeColorTheme === 'amethyst'}">
+                        <a data-ng-click="oneui.settings.activeColorTheme = 'amethyst'" tabindex="-1" href="javascript:void(0)">
+                            <i class="fa fa-circle text-amethyst pull-right"></i> <span class="font-w600">Amethyst</span>
+                        </a>
+                    </li>
+                    <li data-ng-class="{'active': oneui.settings.activeColorTheme === 'city'}">
+                        <a data-ng-click="oneui.settings.activeColorTheme = 'city'" tabindex="-1" href="javascript:void(0)">
+                            <i class="fa fa-circle text-city pull-right"></i> <span class="font-w600">City</span>
+                        </a>
+                    </li>
+                    <li data-ng-class="{'active': oneui.settings.activeColorTheme === 'flat'}">
+                        <a data-ng-click="oneui.settings.activeColorTheme = 'flat'" tabindex="-1" href="javascript:void(0)">
+                            <i class="fa fa-circle text-flat pull-right"></i> <span class="font-w600">Flat</span>
+                        </a>
+                    </li>
+                    <li data-ng-class="{'active': oneui.settings.activeColorTheme === 'modern'}">
+                        <a data-ng-click="oneui.settings.activeColorTheme = 'modern'" tabindex="-1" href="javascript:void(0)">
+                            <i class="fa fa-circle text-modern pull-right"></i> <span class="font-w600">Modern</span>
+                        </a>
+                    </li>
+                    <li data-ng-class="{'active': oneui.settings.activeColorTheme === 'smooth'}">
+                        <a data-ng-click="oneui.settings.activeColorTheme = 'smooth'" tabindex="-1" href="javascript:void(0)">
+                            <i class="fa fa-circle text-smooth pull-right"></i> <span class="font-w600">Smooth</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <a class="h5 text-white logo" data-ui-sref="dashboard" data-js-blur>
+                <img src="assets/img/various/portal.png" />
+            </a>
+        </div>
+        <!-- END Side Header -->
+
+        <!-- Side Content -->
+        <div class="side-content side-content-full">
+            <!-- Main navigation functionality (data-js-main-nav attribute is initialized in js/directives.js) -->
+            <ul class="nav-main" data-js-main-nav>
+                <li data-ng-class="{open: (path.indexOf('/messages/') > -1)}">
+                    <a class="nav-submenu" data-toggle="nav-submenu" href="#">
+                        <i class="si si-badge"></i>
+                        <span class="sidebar-mini-hide">Messages</span>
+                    </a>
+                    <ul>
+                        <li>
+                            <a data-ui-sref="messagesCampaigns" data-ui-sref-active="active">Campaigns</a>
+                        </li>
+                        <li>
+                            <a data-ui-sref="messagesGroups" data-ui-sref-active="active">Groups</a>
+                        </li>
+                        <li>
+                            <a data-ui-sref="messagesCategories" data-ui-sref-active="active">Categories</a>
+                        </li>
+                        <li>
+                            <a data-ui-sref="messagesMedia" data-ui-sref-active="active">Media</a>
+                        </li>
+                    </ul>
+                </li>
+                <li data-ng-class="{open: (path.indexOf('/optimizer/') > -1)}">
+                    <a class="nav-submenu" data-toggle="nav-submenu" href="#">
+                        <i class="si si-badge"></i>
+                        <span class="sidebar-mini-hide">Optimizer</span>
+                    </a>
+                    <ul>
+                        <li>
+                            <a data-ui-sref="optimizer" data-ui-sref-active="active">Zeropark</a>
+                        </li>
+                    </ul>
+                </li>
+                <li data-ng-class="{open: (path.indexOf('/reporting/') > -1)}">
+                    <a class="nav-submenu" data-toggle="nav-submenu" href="#">
+                        <i class="si si-badge"></i>
+                        <span class="sidebar-mini-hide">Reporting</span>
+                    </a>
+                    <ul>
+                        <li>
+                            <a data-ui-sref="reportingOverview" data-ui-sref-active="active">Overview</a>
+                        </li>
+                    </ul>
+                </li>
+                <li data-ng-class="{open: (path.indexOf('/monitoring/') > -1)}">
+                    <a class="nav-submenu" data-toggle="nav-submenu" href="#">
+                        <i class="si si-badge"></i>
+                        <span class="sidebar-mini-hide">Monitoring</span>
+                    </a>
+                    <ul>
+                        <li>
+                            <a data-ui-sref="monitoringLinkChecker" data-ui-sref-active="active">Link Checker</a>
+                        </li>
+                        <li>
+                            <a data-ui-sref="monitoringCampaignAlerts" data-ui-sref-active="active">Campaign Alerts</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <!-- END Side Content -->
+    </div>
+    <!-- Sidebar Content -->
+</div>
+<!-- END Sidebar Scroll Container -->

@@ -1,0 +1,473 @@
+<!-- Page Header -->
+<div class="content bg-gray-lighter">
+    <div class="row items-push">
+        <div class="col-sm-7">
+            <h1 class="page-heading">
+                Reporting Overview
+            </h1>
+        </div>
+        <div class="col-sm-5 text-right">
+            <div class="sel-reporting">
+                <select class="form-control" ng-model="period">
+                    <option value="today">Today (default)</option>
+                    <option value="yesterday">Yesterday</option>
+                    <option value="3">3 Days</option>
+                    <option value="7">7 Days</option>
+                    <option value="this_month">This Month</option>
+                    <option value="last_month">Last Month</option>
+                    <option value="this_year">This Year</option>
+                    <option value="custom_date">Custom Date</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" ng-click="get_overview_report(period, from_date, from_time, to_date, to_time)">Update</button>
+            <div class="input-daterange input-group" ng-show="period == 'custom_date'" data-js-datepicker data-date-format="mm/dd/yyyy">
+                <input class="form-control" type="text" ng-model="from_date" placeholder="From">
+                <span class="input-group-addon"><i class="fa fa-chevron-right"></i></span>
+                <input class="form-control" type="text" ng-model="to_date" placeholder="To">
+            </div>
+            <div class="input-daterange input-group" ng-show="period == 'custom_date'">
+                <input data-js-masked-input="99:99" class="form-control" type="text" placeholder="00:00" ng-model="from_time">
+                <span class="input-group-addon"><i class="fa fa-chevron-right"></i></span>
+                <input data-js-masked-input="99:99" class="form-control" type="text" placeholder="00:00" ng-model="to_time">
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END Page Header -->
+
+<!-- Page Content -->
+<div class="content">
+    <div class="row">
+        <div class="col-md-2 col-sm-3" ng-repeat="t in total_values" ng-hide="$index >= 5">
+            <a class="block block-rounded block-link-hover3 text-center" href="javascript:void(0)">
+                <div class="block-content block-content-full" ng-class="t.increase ? 'bg-success': 'bg-danger'">
+                    <div class="h3 font-w700 text-white">
+                        <span class="h4 text-white-op">$</span> {{t.price}}
+                    </div>
+                    <div class="h6 text-white-op text-uppercase push-5-t">
+                        {{t.title}}
+                    </div>
+                </div>
+                <div class="block-content block-content-full block-content-mini">
+                    <div ng-hide="t.value == null">
+                        <i class="fa" ng-class="t.increase? 'fa-arrow-up text-success' : 'fa-arrow-down text-danger'"></i> {{t.increase? '+' : '-'}}{{t.value}}% {{t.increase? 'Inc' : 'Dec'}}
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 col-sm-3" ng-repeat="t in total_values" ng-hide="$index < 5">
+            <a class="block block-rounded block-link-hover3 text-center" href="javascript:void(0)">
+                <div class="block-content block-content-full" ng-class="t.increase ? 'bg-success': 'bg-danger'">
+                    <div class="h3 font-w700 text-white">
+                        <span class="h4 text-white-op">$</span> {{t.price}}
+                    </div>
+                    <div class="h6 text-white-op text-uppercase push-5-t">
+                        {{t.title}}
+                    </div>
+                </div>
+                <div class="block-content block-content-full block-content-mini">
+                    <div ng-hide="t.value == null">
+                        <i class="fa" ng-class="t.increase? 'fa-arrow-up text-success' : 'fa-arrow-down text-danger'"></i> {{t.increase? '+' : '-'}}{{t.value}}% {{t.increase? 'Inc' : 'Dec'}}
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="block">
+        <div class="block-content">
+            <form class="js-validation-bootstrap form-horizontal">
+                <div class="form-group">
+                    <div class="col-md-6">
+                        <label>By Country > Source</label>
+                        <select ng-model="pagination" class="form-control">
+                            <option value="10">10 (default)</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="all">All</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>
+                            <a ng-click="sort_by_cou_source('title')">
+                                COUNTRY
+                                <span ng-show="sort_by_cou_sources.indexOf('-title') >= 0" class="fa fa-caret-down"></span>
+                                <span ng-show="sort_by_cou_sources.indexOf('title') >= 0" class="fa fa-caret-up"></span>
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="sort_by_cou_source('profit')">
+                                PROFIT
+                                <span ng-show="sort_by_cou_sources.indexOf('-profit') >= 0" class="fa fa-caret-down"></span>
+                                <span ng-show="sort_by_cou_sources.indexOf('profit') >= 0" class="fa fa-caret-up"></span>
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="sort_by_cou_source('revenue')">
+                                REVENUE
+                                <span ng-show="sort_by_cou_sources.indexOf('-revenue') >= 0" class="fa fa-caret-down"></span>
+                                <span ng-show="sort_by_cou_sources.indexOf('revenue') >= 0" class="fa fa-caret-up"></span>
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="sort_by_cou_source('cost')">
+                                COST
+                                <span ng-show="sort_by_cou_sources.indexOf('-cost') >= 0" class="fa fa-caret-down"></span>
+                                <span ng-show="sort_by_cou_sources.indexOf('cost') >= 0" class="fa fa-caret-up"></span>
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="sort_by_cou_source('roi')">
+                                ROI
+                                <span ng-show="sort_by_cou_sources.indexOf('-roi') >= 0" class="fa fa-caret-down"></span>
+                                <span ng-show="sort_by_cou_sources.indexOf('roi') >= 0" class="fa fa-caret-up"></span>
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="sort_by_cou_source('cpa')">
+                                CPA
+                                <span ng-show="sort_by_cou_sources.indexOf('-cpa') >= 0" class="fa fa-caret-down"></span>
+                                <span ng-show="sort_by_cou_sources.indexOf('cpa') >= 0" class="fa fa-caret-up"></span>
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="sort_by_cou_source('rps')">
+                                RPS
+                                <span ng-show="sort_by_cou_sources.indexOf('-rps') >= 0" class="fa fa-caret-down"></span>
+                                <span ng-show="sort_by_cou_sources.indexOf('rps') >= 0" class="fa fa-caret-up"></span>
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="sort_by_cou_source('churn')">
+                                CHURN
+                                <span ng-show="sort_by_cou_sources.indexOf('-churn') >= 0" class="fa fa-caret-down"></span>
+                                <span ng-show="sort_by_cou_sources.indexOf('churn') >= 0" class="fa fa-caret-up"></span>
+                            </a>
+                        </th>
+                        <th>
+                            <a class="pointer" ng-click="view()">
+                                <i class="si si-graph"></i>
+                            </a>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody ng-repeat="item in show_data_by_country() | orderBy:sort_by_cou_sources" ng-class="{'js-table-sections-header': $index % 2 == 0, 'open': open_cou_source['id_'  + item.id]}" >
+                    <tr ng-if="$index % 2 == 0" ng-click="open_cou_source['id_'  + item.id] = !open_cou_source['id_'  + item.id]" ng-hide="item.profit == 0 && item.revenue == 0 && item.revenue == 0 && item.cost == 0 && item.roi == 0 && item.cpa == 0 && item.rps == 0">
+                        <td class="text-center">
+                            <i class="fa fa-angle-right"></i>
+                        </td>
+                        <td>{{item.title}}</td>
+                        <td>{{item.profit ? '$' + item.profit : ''}}</td>
+                        <td>{{item.revenue ? '$' + item.revenue : ''}}</td>
+                        <td>{{item.cost ? '$' + item.cost : ''}}</td>
+                        <td>{{item.roi ? item.roi + '%' : ''}}</td>
+                        <td>{{item.cpa ? item.cpa : ''}}</td>
+                        <td>{{item.rps ? item.rps : ''}}</td>
+                        <td>{{item.churn ? item.churn + '%' : ''}}</td>
+                        <td>
+                            <a class="pointer" ng-click="view(item.id)">
+                                <i class="si si-graph"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr ng-if="$parent.$index % 2 != 0" ng-repeat="datum in item.subs" ng-hide="datum.profit == 0 && datum.revenue == 0 && datum.revenue == 0 && datum.cost == 0 && datum.roi == 0 && datum.cpa == 0 && datum.rps == 0">
+                        <td class="text-center"></td>
+                        <td class="font-w600 text-success">{{datum.title}}</td>
+                        <td>{{datum.profit ? '$' + datum.profit : ''}}</td>
+                        <td>{{datum.revenue ? '$' + datum.revenue : ''}}</td>
+                        <td>{{datum.cost ? '$' + datum.cost : ''}}</td>
+                        <td>{{datum.roi ? datum.roi + '%' : ''}}</td>
+                        <td>{{datum.cpa ? datum.cpa : ''}}</td>
+                        <td>{{datum.rps ? datum.rps : ''}}</td>
+                        <td>{{datum.churn ? datum.churn + '%' : ''}}</td>
+                        <td>
+                            <a class="pointer" ng-click="view(item.id)">
+                                <i class="si si-graph"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="block">
+        <div class="block-content">
+            <form class="js-validation-bootstrap form-horizontal">
+                <div class="form-group">
+                    <div class="col-md-6">
+                        <label>By Vertical > Country </label>
+                        <select ng-model="pagination" class="form-control">
+                            <option value="10">10 (default)</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="all">All</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>
+                            <a ng-click="sort_by_ver_country('title')">
+                                COUNTRY
+                                <span ng-show="sort_by_ver_countrys.indexOf('-title') >= 0" class="fa fa-caret-down"></span>
+                                <span ng-show="sort_by_ver_countrys.indexOf('title') >= 0" class="fa fa-caret-up"></span>
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="sort_by_ver_country('profit')">
+                                PROFIT
+                                <span ng-show="sort_by_ver_countrys.indexOf('-profit') >= 0" class="fa fa-caret-down"></span>
+                                <span ng-show="sort_by_ver_countrys.indexOf('profit') >= 0" class="fa fa-caret-up"></span>
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="sort_by_ver_country('revenue')">
+                                REVENUE
+                                <span ng-show="sort_by_ver_countrys.indexOf('-revenue') >= 0" class="fa fa-caret-down"></span>
+                                <span ng-show="sort_by_ver_countrys.indexOf('revenue') >= 0" class="fa fa-caret-up"></span>
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="sort_by_ver_country('cost')">
+                                COST
+                                <span ng-show="sort_by_ver_countrys.indexOf('-cost') >= 0" class="fa fa-caret-down"></span>
+                                <span ng-show="sort_by_ver_countrys.indexOf('cost') >= 0" class="fa fa-caret-up"></span>
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="sort_by_ver_country('roi')">
+                                ROI
+                                <span ng-show="sort_by_ver_countrys.indexOf('-roi') >= 0" class="fa fa-caret-down"></span>
+                                <span ng-show="sort_by_ver_countrys.indexOf('roi') >= 0" class="fa fa-caret-up"></span>
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="sort_by_ver_country('cpa')">
+                                CPA
+                                <span ng-show="sort_by_ver_countrys.indexOf('-cpa') >= 0" class="fa fa-caret-down"></span>
+                                <span ng-show="sort_by_ver_countrys.indexOf('cpa') >= 0" class="fa fa-caret-up"></span>
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="sort_by_ver_country('rps')">
+                                RPS
+                                <span ng-show="sort_by_ver_countrys.indexOf('-rps') >= 0" class="fa fa-caret-down"></span>
+                                <span ng-show="sort_by_ver_countrys.indexOf('rps') >= 0" class="fa fa-caret-up"></span>
+                            </a>
+                        </th>
+                        <th>
+                            <a ng-click="sort_by_ver_country('churn')">
+                                CHURN
+                                <span ng-show="sort_by_ver_countrys.indexOf('-churn') >= 0" class="fa fa-caret-down"></span>
+                                <span ng-show="sort_by_ver_countrys.indexOf('churn') >= 0" class="fa fa-caret-up"></span>
+                            </a>
+                        </th>
+                        <th>
+                            <a class="pointer" ng-click="view()">
+                                <i class="si si-graph"></i>
+                            </a>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody ng-repeat="item in show_data_by_vertical() | orderBy:sort_by_ver_countrys" ng-class="{'js-table-sections-header': $index % 2 == 0, 'open': open_ver_country['id_'  + item.id]}" >
+                    <tr ng-if="$index % 2 == 0" ng-click="open_ver_country['id_'  + item.id] = !open_ver_country['id_'  + item.id]" ng-hide="item.profit == 0 && item.revenue == 0 && item.revenue == 0 && item.cost == 0 && item.roi == 0 && item.cpa == 0 && item.rps == 0">
+                        <td class="text-center">
+                            <i class="fa fa-angle-right"></i>
+                        </td>
+                        <td>{{item.title}}</td>
+                        <td>{{item.profit ? '$' + item.profit : ''}}</td>
+                        <td>{{item.revenue ? '$' + item.revenue : ''}}</td>
+                        <td>{{item.cost ? '$' + item.cost : ''}}</td>
+                        <td>{{item.roi ? item.roi + '%' : ''}}</td>
+                        <td>{{item.cpa ? item.cpa : ''}}</td>
+                        <td>{{item.rps ? item.rps : ''}}</td>
+                        <td>{{item.churn ? item.churn + '%' : ''}}</td>
+                        <td>
+                            <a class="pointer" ng-click="view(item.id)">
+                                <i class="si si-graph"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr ng-if="$parent.$index % 2 != 0" ng-repeat="datum in item.subs" ng-hide="datum.profit == 0 && datum.revenue == 0 && datum.revenue == 0 && datum.cost == 0 && datum.roi == 0 && datum.cpa == 0 && datum.rps == 0">
+                        <td class="text-center"></td>
+                        <td class="font-w600 text-success">{{datum.title}}</td>
+                        <td>{{datum.profit ? '$' + datum.profit : ''}}</td>
+                        <td>{{datum.revenue ? '$' + datum.revenue : ''}}</td>
+                        <td>{{datum.cost ? '$' + datum.cost : ''}}</td>
+                        <td>{{datum.roi ? datum.roi + '%' : ''}}</td>
+                        <td>{{datum.cpa ? datum.cpa : ''}}</td>
+                        <td>{{datum.rps ? datum.rps : ''}}</td>
+                        <td>{{datum.churn ? datum.churn + '%' : ''}}</td>
+                        <td>
+                            <a class="pointer" ng-click="view(item.id)">
+                                <i class="si si-graph"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="block">
+        <div class="block-content">
+            <form class="js-validation-bootstrap form-horizontal">
+                <div class="form-group">
+                    <div class="col-md-6">
+                        <label>By Country > Vertical</label>
+                        <select ng-model="pagination" class="form-control">
+                            <option value="10">10 (default)</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="all">All</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>
+                        <a ng-click="sort_by_cou_vertical('title')">
+                            COUNTRY
+                            <span ng-show="sort_by_cou_verticals.indexOf('-title') >= 0" class="fa fa-caret-down"></span>
+                            <span ng-show="sort_by_cou_verticals.indexOf('title') >= 0" class="fa fa-caret-up"></span>
+                        </a>
+                    </th>
+                    <th>
+                        <a ng-click="sort_by_cou_vertical('profit')">
+                            PROFIT
+                            <span ng-show="sort_by_cou_verticals.indexOf('-profit') >= 0" class="fa fa-caret-down"></span>
+                            <span ng-show="sort_by_cou_verticals.indexOf('profit') >= 0" class="fa fa-caret-up"></span>
+                        </a>
+                    </th>
+                    <th>
+                        <a ng-click="sort_by_cou_vertical('revenue')">
+                            REVENUE
+                            <span ng-show="sort_by_cou_verticals.indexOf('-revenue') >= 0" class="fa fa-caret-down"></span>
+                            <span ng-show="sort_by_cou_verticals.indexOf('revenue') >= 0" class="fa fa-caret-up"></span>
+                        </a>
+                    </th>
+                    <th>
+                        <a ng-click="sort_by_cou_vertical('cost')">
+                            COST
+                            <span ng-show="sort_by_cou_verticals.indexOf('-cost') >= 0" class="fa fa-caret-down"></span>
+                            <span ng-show="sort_by_cou_verticals.indexOf('cost') >= 0" class="fa fa-caret-up"></span>
+                        </a>
+                    </th>
+                    <th>
+                        <a ng-click="sort_by_cou_vertical('roi')">
+                            ROI
+                            <span ng-show="sort_by_cou_verticals.indexOf('-roi') >= 0" class="fa fa-caret-down"></span>
+                            <span ng-show="sort_by_cou_verticals.indexOf('roi') >= 0" class="fa fa-caret-up"></span>
+                        </a>
+                    </th>
+                    <th>
+                        <a ng-click="sort_by_cou_vertical('cpa')">
+                            CPA
+                            <span ng-show="sort_by_cou_verticals.indexOf('-cpa') >= 0" class="fa fa-caret-down"></span>
+                            <span ng-show="sort_by_cou_verticals.indexOf('cpa') >= 0" class="fa fa-caret-up"></span>
+                        </a>
+                    </th>
+                    <th>
+                        <a ng-click="sort_by_cou_vertical('rps')">
+                            RPS
+                            <span ng-show="sort_by_cou_verticals.indexOf('-rps') >= 0" class="fa fa-caret-down"></span>
+                            <span ng-show="sort_by_cou_verticals.indexOf('rps') >= 0" class="fa fa-caret-up"></span>
+                        </a>
+                    </th>
+                    <th>
+                        <a ng-click="sort_by_cou_vertical('churn')">
+                            CHURN
+                            <span ng-show="sort_by_cou_verticals.indexOf('-churn') >= 0" class="fa fa-caret-down"></span>
+                            <span ng-show="sort_by_cou_verticals.indexOf('churn') >= 0" class="fa fa-caret-up"></span>
+                        </a>
+                    </th>
+                    <th>
+                        <a class="pointer" ng-click="view()">
+                            <i class="si si-graph"></i>
+                        </a>
+                    </th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="item in show_data_by_country_vertical() | orderBy:sort_by_cou_verticals" ng-class="{'js-table-sections-header': $index % 2 == 0, 'open': open_cou_vertical['id_' + item.id]}" >
+                <tr ng-if="$index % 2 == 0" ng-click="open_cou_vertical['id_' + item.id] = !open_cou_vertical['id_' + item.id]" ng-hide="item.profit == 0 && item.revenue == 0 && item.revenue == 0 && item.cost == 0 && item.roi == 0 && item.cpa == 0 && item.rps == 0">
+                    <td class="text-center">
+                        <i class="fa fa-angle-right"></i>
+                    </td>
+                    <td>{{item.title}}</td>
+                    <td>{{item.profit ? '$' + item.profit : ''}}</td>
+                    <td>{{item.revenue ? '$' + item.revenue : ''}}</td>
+                    <td>{{item.cost ? '$' + item.cost : ''}}</td>
+                    <td>{{item.roi ? item.roi + '%' : ''}}</td>
+                    <td>{{item.cpa ? item.cpa : ''}}</td>
+                    <td>{{item.rps ? item.rps : ''}}</td>
+                    <td>{{item.churn ? item.churn + '%' : ''}}</td>
+                    <td>
+                        <a class="pointer" ng-click="view(item.id)">
+                            <i class="si si-graph"></i>
+                        </a>
+                    </td>
+                </tr>
+                <tr ng-if="$parent.$index % 2 != 0" ng-repeat="datum in item.subs" ng-hide="datum.profit == 0 && datum.revenue == 0 && datum.revenue == 0 && datum.cost == 0 && datum.roi == 0 && datum.cpa == 0 && datum.rps == 0">
+                    <td class="text-center"></td>
+                    <td class="font-w600 text-success">{{datum.title}}</td>
+                    <td>{{datum.profit ? '$' + datum.profit : ''}}</td>
+                    <td>{{datum.revenue ? '$' + datum.revenue : ''}}</td>
+                    <td>{{datum.cost ? '$' + datum.cost : ''}}</td>
+                    <td>{{datum.roi ? datum.roi + '%' : ''}}</td>
+                    <td>{{datum.cpa ? datum.cpa : ''}}</td>
+                    <td>{{datum.rps ? datum.rps : ''}}</td>
+                    <td>{{datum.churn ? datum.churn + '%' : ''}}</td>
+                    <td>
+                        <a class="pointer" ng-click="view(item.id)">
+                            <i class="si si-graph"></i>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- END Categories -->
+</div>
+<!-- END Page Content -->
+
+<div class="modal fade" id="view-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-popin modal-lg">
+        <div class="modal-content">
+            <div class="block block-themed block-transparent remove-margin-b">
+                <div class="block-header bg-primary-dark">
+                    <ul class="block-options">
+                        <li>
+                            <button data-dismiss="modal" type="button">
+                                <i class="si si-close"></i>
+                            </button>
+                        </li>
+                    </ul>
+                    <h3 class="block-title">View</h3>
+                </div>
+                <div class="block-content block-content-full">
+                    <canvas class="chart chart-line" chart-data="chart_data"
+                            chart-labels="labels" chart-series="series" chart-options="options">
+                    </canvas>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,186 @@
+<!-- Page Header -->
+<div class="content bg-gray-lighter">
+    <div class="row items-push">
+        <div class="col-sm-7">
+            <h1 class="page-heading">
+                Campaigns Alerts
+            </h1>
+        </div>
+    </div>
+</div>
+<!-- END Page Header -->
+
+<!-- Page Content -->
+<div class="content campaign">
+    <!-- Categories -->
+    <div class="block">
+        <div class="block-content">
+            <form class="js-validation-bootstrap form-horizontal">
+                <div class="form-group">
+                <div class="row">
+                    <div class="col-md-8" ng-blur="ui_options.open_camp=!ui_options.open_camp">
+                        <div class="checkbox-dropdown-container" >
+                            <input type="text" class="form-control"  ng-value="sel_campaigns(new_camp_alerts.camps)" ng-click="ui_options.open_camp=!ui_options.open_camp;" >
+                            <ul class="checkbox-dropdown" ng-hide="!ui_options.open_camp" style="z-index: 100000; background: white;" >
+                                <li ng-repeat="(key , voluum_campaign) in voluum_campaigns">
+                                    <label class="css-input css-checkbox css-checkbox-sm css-checkbox-primary">
+                                        <input type="checkbox" ng-model="new_camp_alerts.camps[key].checked" ng-click="new_camp_alerts.camps[key].campaignId = voluum_campaign.campaignId; new_camp_alerts.camps[key].id = key; new_camp_alerts.camps[key].campaignUrl = voluum_campaign.campaignUrl; new_camp_alerts.camps[key].campaignName = voluum_campaign.campaignName;">
+                                        <span></span>{{voluum_campaign.campaignName}}
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-4">
+                        <select class="form-control" ng-model="new_camp_alerts.metric" ng-options="met for met in metrics">
+                            <option value="">Select Metric</option>
+                        </select>
+                    </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-4">
+                        <select class="form-control" ng-model="new_camp_alerts.logic" ng-options="logic for logic in logics">
+                            <option value="">Select Metric</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control" type="number" ng-model="new_camp_alerts.value">
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-default" ng-click="add()">Add Alerts</button>
+                    </div>
+                </div>
+            </form>
+            <table class="table table-hover js-dataTable-categories">
+                <thead>
+                    <tr>
+                        <th>
+                            <label class="css-input css-checkbox css-checkbox-sm css-checkbox-primary">
+                                <input type="checkbox" ng-model="camps[key].checked">
+                                <span></span>
+                            </label>
+                        </th>
+                        <th>Status</th>
+                        <th>Campaign</th>
+                        <th>URL</th>
+                        <th>Monitor</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="item in camp_alerts">
+                        <td>
+                            <label class="css-input css-checkbox css-checkbox-sm css-checkbox-primary">
+                                <input type="checkbox" ng-model="camps[key].checked">
+                                <span></span>
+                            </label>
+                        </td>
+                        <td>{{item.status}}</td>
+                        <td>
+                            {{item.campaignName}}
+                        </td>
+                        <td>
+                            {{item.campaignUrl}}
+                        </td>
+                        <td>
+                            <label class="css-input switch switch-primary switch-sm">
+                                <input type="checkbox" ng-checked="item.monitor" ng-model="item.monitor" ng-click="update_monitor($index, item.status)">
+                                <span></span>
+                            </label>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <button class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="Edit Group" ng-click="edit($index)">
+                                    <i class="fa fa-pencil"></i>
+                                </button>
+                                <button class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="Remove Group" ng-click="delete($index)">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- END Categories -->
+</div>
+<!-- END Page Content -->
+
+
+<div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-popin modal-lg">
+        <div class="modal-content">
+            <div class="block block-themed block-transparent remove-margin-b">
+                <div class="block-header bg-primary-dark">
+                    <ul class="block-options">
+                        <li>
+                            <button data-dismiss="modal" type="button">
+                                <i class="si si-close"></i>
+                            </button>
+                        </li>
+                    </ul>
+                    <h3 class="block-title">Update</h3>
+                </div>
+                <div class="block-content block-content-narrow">
+                    <form class="js-validation-bootstrap form-horizontal">
+                        <div class="form-group">
+                            <div class="col-md-6">
+                                <select class="form-control" ng-model="tm_camp_alert.campaign" ng-options="t.campaignName for t in voluum_campaigns track by t.campaignId">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-6">
+                                <select class="form-control" ng-model="tm_camp_alert.metric" ng-options="metric for metric in metrics">
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-control" ng-model="tm_camp_alert.logic" ng-options="logic for logic in logics">
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+ 
+                                <input class="form-control" type="number" id="value" ng-model="tm_camp_alert.value">
+                            </div>
+
+
+                        </div>
+
+                        <div class="form-group">
+                            
+                            <label class="col-md-4 control-label" for="val-phoneus">Status
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            <div class="col-md-8">
+                                <select class="form-control" ng-model="tm_camp_alert.status" ng-options="status for status in camp_alert_statuses">
+                                </select>
+                            </div>
+
+
+                            <label class="col-md-4 control-label" for="val-phoneus">Monitor
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-md-8">
+                                <label class="css-input switch switch-primary">
+                                    <input type="checkbox" ng-checked="tm_camp_alert.monitor" ng-model="tm_camp_alert.monitor">
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal">Close</button>
+                <button class="btn btn-sm btn-primary" type="button" ng-click="update()">
+                    <i class="fa fa-check"></i> Save </button>
+            </div>
+        </div>
+    </div>
+</div>

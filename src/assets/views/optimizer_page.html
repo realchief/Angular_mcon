@@ -1,0 +1,243 @@
+<!-- Page Header -->
+<div class="content bg-gray-lighter">
+    <div class="row items-push">
+        <div class="col-sm-7">
+            <h1 class="page-heading">
+                Optimizer
+            </h1>
+        </div>
+    </div>
+</div>
+<!-- END Page Header -->
+
+<!-- Page Content -->
+<div class="content">
+    <!-- Categories -->
+    <div class="block">
+        <div class="block-content">
+            <form class="js-validation-bootstrap form-horizontal" name="optimizerForm">
+                <div class="form-group">
+                    <div class="col-md-6">
+                        <select class="form-control" ng-model="new_rules.campaign" ng-options="t.name for t in traffic_source_campaigns" ng-required="true">
+                            <option value="">Select Campaign</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div ng-repeat="new_rule in new_rules.conditions">
+                    <div ng-repeat="constraint in new_rule.constraints">
+                        <div class="form-group">
+                            <div class="col-md-3" ng-if="constraint.id == 1">
+                                <select class="form-control" ng-model="new_rule.period" ng-options="v as k for (k, v) in periods">
+                                </select>
+                            </div>
+                            <div class="col-md-3" ng-if="constraint.conjunction">
+                                <div class="text-right">
+                                    <label class="css-input css-radio css-radio-primary">
+                                        <input type="radio" name="{{'new_rule' + $parent.$parent.$index}}" value="and" ng-model="constraint.conjunction"><span></span> AND
+                                    </label>
+                                    <label class="css-input css-radio css-radio-primary">
+                                        <input type="radio" name="{{'new_rule' + $parent.$parent.$index}}" value="or" ng-model="constraint.conjunction"><span></span> OR
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <select class="form-control" ng-model="constraint.metric" ng-options="t for t in metrics">
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <select class="form-control" ng-model="constraint.operator" ng-options="k as v for (k, v) in operators">
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input class="form-control" ng-model="constraint.value" ng-required="true" ng-pattern="regexes[constraint.metric]" placeholder="{{placeholders[constraint.metric]}}" data-toggle="tooltip" title="{{placeholders[constraint.metric]}}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-6">
+                            <select class="form-control" ng-model="new_rule.action" ng-options="t for t in actions">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <a ng-click="add_condition()">New Rule</a>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="add_rule()" ng-disabled="optimizerForm.$invalid">Add Rules</button>
+                    </div>
+                </div>
+            </form>
+            <div class="row">
+                <div class="col-md-6">
+                    <input class="form-control" placeholder="Search Campaign" ng-model="search">
+                </div>
+            </div>
+            <table class="table table-hover js-dataTable-categories">
+                <thead>
+                    <tr>
+                        <th>Rule #</th>
+                        <th>Campaign Name</th>
+                        <th>Rule Parameters</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="item in rules | filter : { campaign :  {name : search} }">
+                        <td>{{$index + 1}}</td>
+                        <td>{{item.campaign.name}}</td>
+                        <td>
+                            
+<!--                             <span class="label label-info">{{inline_rule_first($index)}}</span>
+                            {{item.conjunction}}
+                            <span class="label label-info">{{inline_rule_second($index)}}</span> -->
+
+
+                            <span ng-repeat="constraint in item.constraints">
+                                {{constraint.conjunction}}
+                                <span class="label label-info">{{inline_rule($parent.$index, $index)}}</span>
+                            </span>  
+                        </td>
+                        <td>
+                            <label class="css-input switch switch-primary switch-sm">
+                                <input type="checkbox" ng-checked="item.status" ng-model="item.status" ng-click="update_status($index, item.status)">
+                                <span></span>
+                            </label>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a class="btn btn-xs btn-default" data-toggle="tooltip" title="View Campaign" ng-click="view($index)">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                <button class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="Edit Optimizer" ng-click="edit($index)">
+                                    <i class="fa fa-pencil"></i>
+                                </button>
+                                <button class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="Remove Optimizer" ng-click="delete($index)">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- END Categories -->
+</div>
+<!-- END Page Content -->
+
+<div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-popin modal-lg">
+        <div class="modal-content">
+            <div class="block block-themed block-transparent remove-margin-b">
+                <div class="block-header bg-primary-dark">
+                    <ul class="block-options">
+                        <li>
+                            <button data-dismiss="modal" type="button">
+                                <i class="si si-close"></i>
+                            </button>
+                        </li>
+                    </ul>
+                    <h3 class="block-title">Update</h3>
+                </div>
+                <div class="block-content block-content-narrow">
+                    <form class="js-validation-bootstrap form-horizontal">
+                        <div class="form-group">
+                            <div class="col-md-6">
+                                <select class="form-control" ng-model="tm_rule.campaign" ng-options="t.name for t in traffic_source_campaigns track by t.id">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-3">
+                                <select class="form-control" ng-model="tm_rule.period" ng-options="v as k for (k, v) in periods">
+                                </select>
+                            </div>
+
+                            <div class="col-md-9" ng-repeat="constraint in tm_rule.constraints">
+
+                                <div class="col-md-3" ng-if="constraint.conjunction">
+                                    <div class="text-right">
+                                        <label class="css-input css-radio css-radio-primary">
+                                            <input type="radio" name="{{constraint.id}}" value="and" ng-model="constraint.conjunction"><span></span> AND
+                                        </label>
+                                        <label class="css-input css-radio css-radio-primary">
+                                            <input type="radio" name="{{constraint.id}}" value="or" ng-model="constraint.conjunction"><span></span> OR
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <select class="form-control" ng-model="constraint.metric" ng-options="t for t in metrics">
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <select class="form-control" ng-model="constraint.operator" ng-options="k as v for (k, v) in operators">
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input class="form-control" ng-model="constraint.value" ng-pattern="regexes[constraint.metric]" placeholder="{{placeholders[constraint.metric]}}" data-toggle="tooltip" title="{{placeholders[constraint.metric]}}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-6">
+                                <select class="form-control" ng-model="tm_rule.action" ng-options="t for t in actions">
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal">Close</button>
+                <button class="btn btn-sm btn-primary" type="button" ng-click="update()">
+                    <i class="fa fa-check"></i> Save </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="view-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-popin modal-lg">
+        <div class="modal-content">
+            <div class="block block-themed block-transparent remove-margin-b">
+                <div class="block-header bg-primary-dark">
+                    <ul class="block-options">
+                        <li>
+                            <button data-dismiss="modal" type="button">
+                                <i class="si si-close"></i>
+                            </button>
+                        </li>
+                    </ul>
+                    <h3 class="block-title">View</h3>
+                </div>
+                <div class="block-content block-content-narrow">
+                    <ul class="ul-contents">
+                        <li ng-repeat="datum in filtered_data">
+                            {{datum.content}}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

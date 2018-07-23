@@ -1,0 +1,200 @@
+<!-- Page Header -->
+<div class="content bg-gray-lighter">
+    <div class="row items-push">
+        <div class="col-sm-7">
+            <h1 class="page-heading">
+                Link Checker
+            </h1>
+        </div>
+    </div>
+</div>
+<!-- END Page Header -->
+
+<!-- Page Content -->
+<div class="content">
+    <!-- Categories -->
+    <div class="block">
+        <div class="block-content">
+            <form class="js-validation-bootstrap form-horizontal row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            <select class="form-control" id="monitor_type"
+                                    name="monitor_type"
+                                    ng-model="new_link.type"
+                                    ng-change="monitor_type_change()"
+                            >
+                                <option value="">Custom URL</option>
+                                <option value="offer_url">Offer URL</option>
+                                <option value="lander_url">Lander URL</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input id="monitor_name" class="form-control" ng-model="new_link.name" placeholder="Link Name">
+                        </div>
+                        <div class="col-md-5" ng-show="new_link.type == ''">
+                            <input id="monitor_url" class="form-control" ng-model="new_link.url" placeholder="Enter URL...">
+                        </div>
+                        <div class="col-md-5" ng-show="new_link.type != ''">
+                            <angucomplete-alt id="ex1"
+                                              ng-model="new_link.url"
+                                              placeholder="Enter URL..."
+                                              pause="100"
+                                              selected-object="voluum_data_selected"
+                                              local-data="voluum_data"
+                                              search-fields="monitor_link_name"
+                                              title-field="monitor_link_name"
+
+                                              minlength="1"
+                                              input-class="form-control form-control-small"
+                                              match-class="highlight"
+                            />
+                        </div>
+
+                        <div class="col-md-2">
+                            <button class="btn-sm btn-default" ng-click="add()">Add URL</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <form class="js-validation-bootstrap form-horizontal row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            <select class="form-control"
+                                    name="status" ng-model="search_term.status" >
+                                <option value="">All</option>
+                                <option value="Active">Active</option>
+                                <option value="Flagged">Flagged</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input class="form-control" ng-model="search_term.name" placeholder="Search Name">
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+
+            <table class="table table-hover js-dataTable-monitoring_links">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Status</th>
+                        <th>Name</th>
+                        <th>URL</th>
+                        <th>Monitor</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="item in monitoring_links | filter:{status: search_term.status, name: search_term.name}">
+                        <td>{{$index + 1}}</td>
+                        <td>{{item.status}}</td>
+                        <td>{{item.name}}</td>
+                        <td><a href="{{item.url}}" target="_new">Visit Link</a></td>
+                        <td>
+                            <label class="css-input switch switch-primary switch-sm">
+                                <input type="checkbox" ng-checked="item.monitor_active"
+                                       ng-model="item.monitor_active"
+                                       ng-click="monitor($index, item.monitor_active)">
+                                <span></span>
+                            </label>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+
+                                <button class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="Edit" ng-click="edit($index)">
+                                    <i class="fa fa-pencil"></i>
+                                </button>
+                                <button class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="Remove" ng-click="delete($index)">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- END Categories -->
+</div>
+<!-- END Page Content -->
+
+<div class="modal fade" id="modal-popin" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-popin">
+        <div class="modal-content">
+            <div class="block block-themed block-transparent remove-margin-b">
+                <div class="block-header bg-primary-dark">
+                    <ul class="block-options">
+                        <li>
+                            <button data-dismiss="modal" type="button">
+                                <i class="si si-close"></i>
+                            </button>
+                        </li>
+                    </ul>
+                    <h3 class="block-title">Update</h3>
+                </div>
+                <div class="block-content block-content-narrow">
+                    <form class="js-validation-bootstrap form-horizontal">
+                        <div class="form-group">
+
+                            <label class="col-md-4 control-label">Status
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-md-8">
+                                <select class="form-control"
+                                        name="status" ng-model="edit_link.status" >
+                                    <option value=""></option>
+                                    <option value="Active">Active</option>
+                                    <option value="Flagged">Flagged</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Name
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-md-8">
+                                <input class="form-control" type="text"
+                                       ng-model="edit_link.name"
+                                       name="name"
+                                       placeholder="Name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" >Url
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-md-8">
+                                <input class="form-control"
+                                       type="text"
+                                       ng-model="edit_link.url"
+                                       name="url"
+                                       placeholder="Url">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Monitor
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-md-8">
+                                <label class="css-input switch switch-primary">
+                                    <input type="checkbox" ng-checked="edit_link.monitor_active" ng-model="edit_link.monitor_active">
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal">Close</button>
+                <button class="btn btn-sm btn-primary" type="button" ng-click="update()">
+                    <i class="fa fa-check"></i> Update</button>
+            </div>
+        </div>
+    </div>
+</div>

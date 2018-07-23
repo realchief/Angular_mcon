@@ -1,0 +1,159 @@
+<!-- Page Header -->
+<div class="content bg-gray-lighter">
+    <div class="row items-push">
+        <div class="col-sm-7">
+            <h1 class="page-heading">
+                Media
+            </h1>
+        </div>
+    </div>
+</div>
+<!-- END Page Header -->
+
+<!-- Page Content -->
+<div class="content">
+    <!-- Categories -->
+    <div class="block">
+        <div class="block-content">
+            <form class="js-validation-bootstrap form-horizontal" name="mediaForm">
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <input type="file" id="example-file-multiple-input" name="example-file-multiple-input" multiple accept="image/*" ng-file-model="files" ng-required="true">
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-control" ng-model="media_type" ng-options="upload_type for upload_type in ['Icon', 'Badge', 'Image']" ng-required="true">
+                            <option value="">Media Type</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                    <!-- DIFF 1 -->
+                        <button class="btn btn-primary" ng-click="add_media()" ng-disabled="mediaForm.$invalid">Import</button>
+                    </div>
+                </div>
+            </form>
+            <form class="js-validation-bootstrap form-horizontal" name="mediaSearchForm">
+                <div class="form-group">
+                    <div class="col-md-2">
+                        <select class="form-control" ng-model="pagination" ng-options="pag for pag in [30, 100, 300, 'All']"></select>
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control" ng-model="search_term.name" placeholder="Search Name" ng-change="search()">
+                    </div>
+                    <div class="col-md-2">
+                        <input class="form-control" ng-model="search_term.type" placeholder="Search Type" ng-change="search()">
+                    </div>
+                    <div class="col-md-2">
+                        <!-- <input class="form-control" ng-model="search_term.tag" placeholder="Search Tags" ng-change="search()"> -->
+                        <input class="form-control" ng-model="search_term.tag" placeholder="Search Tags" ng-change="search()">
+                    </div>
+                    <div class="col-md-3 btn-group-sm">
+                        <button class="btn btn-default btn-sm" ng-click="add_tag_modal()">Assign Tag</button>
+                        <button class="btn btn-default btn-sm" ng-click="remove_tag_modal()">Remove Tag</button>
+                        <button class="btn btn-default btn-sm" ng-click="remove_media(null)">Delete</button>
+                    </div>
+                </div>
+            </form>
+            <table class="table table-hover js-dataTable-categories">
+                <thead>
+                    <tr>
+                        <th>
+                            <label class="css-input css-checkbox css-checkbox-sm css-checkbox-primary">
+                                <input type="checkbox" ng-checked="selected_all" ng-model="selected_all" ng-change="select_all()">
+                                <span></span>
+                            </label>
+                        </th>
+                        <th>Media Name</th>
+                        <th>Type</th>
+                        <th>Tag</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="(key, item) in filtered_medias">
+                        <td>
+                            <label class="css-input css-checkbox css-checkbox-sm css-checkbox-primary">
+                                <input type="checkbox" ng-checked="item.selected" ng-model="item.selected" ng-change="select()">
+                                <span></span>
+                            </label>
+                        </td>
+                        <td><input class="no-border" ng-mouseleave="hidden_preview()" ng-value="item.name" ng-mouseover="preview(item.url, item.media_type)" readonly="readonly"/></td>
+                        <td>
+                            {{item.media_type}}
+                        </td>
+                        <td>
+                            <span class="label label-info" ng-repeat="tag in item.tags">
+                                {{tag.name}} <i class="fa fa-times" ng-click="remove_tag(key, tag)"></i>
+                            </span>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <button class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="Remove Media" ng-click="remove_media(key)">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- END Categories -->
+</div>
+<!-- END Page Content -->
+
+
+<div class="modal fade" id="modal-popin" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-popin modal-lg">
+        <div class="modal-content">
+            <div class="block block-themed block-transparent remove-margin-b">
+                <div class="block-header bg-primary-dark">
+                    <ul class="block-options">
+                        <li>
+                            <button data-dismiss="modal" type="button">
+                                <i class="si si-close"></i>
+                            </button>
+                        </li>
+                    </ul>
+                    <h3 class="block-title">{{is_delete_modal ? 'Remove Tag' : 'Add Tag'}}</h3>
+                </div>
+                <div class="block-content block-content-narrow">
+                    <form class="js-validation-bootstrap form-horizontal">
+                        <div class="form-group">
+                            <div class="col-md-3 col-sm-4" ng-repeat="(key, tag) in tags" ng-if="delete_tags.indexOf(key) < 0">
+                                <label class="css-input css-checkbox css-checkbox-sm css-checkbox-primary">
+                                    <input type="checkbox" ng-checked="tag.checked" ng-model="tag.checked">
+                                    <span></span> {{tag.name}}
+                                </label>
+                                <button class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="Remove Tag" ng-click="delete_tag(key)">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                        </div>
+                        <div class="form-group" style="display:  {{is_delete_modal ? 'none' : ''}};">
+                            <label class="col-md-4 control-label">Tag Name
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-md-4">
+                                <input class="form-control" type="text" ng-model="new_tag" name="val-phoneus" placeholder="Tag Name">
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-sm btn-default" ng-click="add_new_tag()">Add New Tag</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm btn-default" type="button" data-dismiss="modal">Close</button>
+                <button class="btn btn-sm btn-primary" type="button" ng-click="is_delete_modal ? remove_tag() : assign_tags()">
+                    <i class="fa fa-check"></i> Save </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="img-preview hidden" ng-class="preview_type">
+    <img src="{{preview_url || 'assets/img/photos/photo1.jpg' }}">
+</div>
